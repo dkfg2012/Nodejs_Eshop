@@ -1,0 +1,172 @@
+*{
+	margin: 0px;
+	padding: 0px;
+	background-color: #F5F5F5;
+}
+
+.product-box{
+	width: 800px;
+	margin: auto;
+	display: flex;
+	flex-direction: column;
+	background-color: white;
+}
+
+.product-name{
+	padding-top: 30px;
+	padding-bottom: 20px;
+	align-self: center;
+	background-color: white;
+
+}
+
+.product-wording{
+	padding: 0px 20px 20px 20px;
+	color: grey;
+	background-color: white;
+}
+
+.product-main-content{
+	margin: auto;
+	display: flex;
+	flex-direction: row;
+	background-color: white;
+}
+
+.product-img{
+	padding: 0px 20px 20px 20px;
+	background-color: white;
+}
+
+.product-detail{
+	padding: 0px 20px 20px 20px;
+}
+
+table, th, td{
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-size: 20px;
+	padding: 4px;
+	text-align: center;
+	background-color: white;
+	width: 300px;
+}
+
+.product-price{
+	font-weight: bold;
+	font-size: 30px;
+	align-self: center;
+	background-color: white;
+	padding-bottom: 30px;
+}
+
+.buy-btn , .cart-btn{
+	display: inline-block;
+	margin: 0px 30px 20px 30px;
+	padding-top: 20px;
+	height: 60px;
+	font-size: 24px;
+	text-decoration: none;
+	color: white;
+	font-weight: bold;
+	background-color: red;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.product-description{
+	padding: 20px 30px 20px 30px;
+	background-color: white;
+}
+
+.product-description-p{
+	background-color: white;
+	font-size: 30px;
+}
+
+.product-btn-container{
+	padding: 0px 30px 20px 30px;
+	background-color: white;
+}
+
+.left-btn{
+	background-color: white;
+	padding-left: 20px;
+}
+
+.bottom-btn{
+	border-radius: 25px;
+	height: 30px;
+	width: 80px;
+	border: none;
+	margin-right: 20px;
+}
+
+.prev-next-product{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 800px;
+	margin:auto;
+	padding: 20px 0px 20px 0px
+}
+
+
+.prev-product-a , .next-product-a, .return-a{
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 25px;
+	color: black;
+}
+
+
+.product-comment{
+	padding-top: 20px;
+	width: 800px;
+	margin: auto;
+	background-color: white;
+}
+
+.comment-title{
+	padding-left: 20px;
+	font-size:30px;
+	font-weight: normal;
+	background-color: white;
+}
+
+.comment-form-field{
+	width: 780px;
+	padding: 10px 0px 0px 20px;
+	background-color: white;
+	display: flex;
+	flex-direction: column;
+}
+
+.comment-textbox{
+	height: 100px;
+	width: 760px;
+	border: 1px solid grey;
+	border-radius: 5px;
+	box-shadow: 0px 0px 0px 1px rgba(0,0,0,0.3) inset;
+	resize: none;  
+}
+
+.comments-title-size{
+	font-size: 40px;
+}
+
+.comment-section>p{
+	padding:20px 0px 10px 20px;
+	background-color: white; 
+	border-bottom: 1px solid grey;
+	font-size: 20px;
+}
+
+.post-btn{
+	width: 120px;
+	height: 30px;
+	border-radius: 10px;
+	margin-top: 10px;
+	margin-left: 82%;	
+	border-style: none;
+}

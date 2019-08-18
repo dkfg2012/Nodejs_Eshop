@@ -1,0 +1,46 @@
+*{
+	margin: 0px;
+	padding: 0px;
+}
+
+.success-container{
+	width: 600px;
+	margin: auto;
+
+}
+
+.text-container{
+	text-align: center;
+	font-size: 30px;
+	margin-top: 25%;
+	background-color: #F5F5F5;
+	border: 2px solid black;
+	border-radius: 5px;
+}
+
+.jumping-page-t{
+	padding: 20px 10px 20px 10px;
+}
+
+@keyframes sparkle{
+	0% {opacity: 0;}
+	10% {opacity: 1;}
+	20% {opacity: 0;}
+	30% {opacity: 1;}
+	40% {opacity: 0;}
+	50% {opacity: 1;}
+	60% {opacity: 0;}
+	70% {opacity: 1;}
+	80% {opacity: 0;}
+	90% {opacity: 1;}
+	100% {opacity: 0;}
+}
+
+.jumping-page-t>span{
+	animation-name: sparkle;
+	animation-duration: 6s;
+}
+
+.jumping-page-t>a{
+	font-size: 15px;
+}

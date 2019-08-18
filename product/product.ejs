@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Detail —— <%= name%></title>
+	<link rel="stylesheet" href="../css/product_style.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+	<script src="../jquery-3.3.1.js"></script>
+	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>	
+</head>
+<body>
+	<section class="product-box">
+		<h1 class="product-name"><%= name %></h1>
+		<p class="product-wording">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium delectus optio culpa alias, nobis ex voluptate commodi perspiciatis atque! Quae!</p>
+		<div class="product-main-content">
+			<img class="product-img" src='../<%= image %>' alt="image1">
+			<table class="product-detail">
+				<tbody>
+					<tr>
+						<th>Seller</th>
+						<td>Admin</td>	
+					</tr>
+					<tr>
+						<th>Category</th>
+						<td><?php echo $cresult; ?></td>
+					</tr>
+					<tr>
+						<th>Brand</th>
+						<td>TaoBao</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="product-price"><%= price %> HKD</div>
+		<a href="" class="buy-btn">Buy here</a>
+		<a href="../add_cart/product_id=<%= id %>" class="cart-btn">Add to cart</a>
+		<div class="product-description">
+			<p class="product-description-p">
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis inventore, aperiam odit consequuntur? Fugit doloremque, officiis harum. Voluptatum officia, impedit aliquam mollitia iusto cupiditate! Voluptate sequi neque fugiat dolores tenetur!
+			</p>
+		</div>
+		<div class="product-btn-container">
+			<div class="left-btn">
+				<button class="bottom-btn">Like</button>
+				<button class="bottom-btn">Dislike</button>
+			</div>
+		</div>
+	</section>
+	<div class="prev-next-product">
+		<% if(id != 1) {%>
+		<div class="prev-product">
+			<a class="prev-product-a" href="../test/product_id=<%= id-1 %>">
+				<i class="fas fa-chevron-left">
+					previous
+				</i>
+			</a>
+		</div>
+		<% } %>
+		<div class="return">
+			<a href="../main.html" class="return-a">Return</a>
+		</div>
+		<% if(id < 34) {%>
+		<div class="next-product">
+			<a class="next-product-a" href="../test/product_id=<%= id+1 %>">
+				next
+				<i class="fas fa-chevron-right"></i>
+			</a>
+		</div>
+		<% } %>
+
+
+
+</body>
+</html>
