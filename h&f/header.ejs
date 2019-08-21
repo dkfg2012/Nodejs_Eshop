@@ -1,0 +1,20 @@
+<link rel="stylesheet" href="/main/css/main_styles.css">
+<div id="head-bar">
+	<span class="logo">
+		<img src="../mainPage_p/logo.svg" alt="logo">
+	</span>
+	<div class="search-bar">
+		<input type="text" placeholder="Search..">
+		<button type="submit">Submit</button>
+		<% if(login == true) {%>
+			<button type="submit"><a href="logout.html">Logout</a></button>
+			<button><a href="user_home.html">User profile</a></button>
+			<% if( merchant == true){ %>
+				<button><a href="merchant_home.html">Merchant profile</a></button>
+			<% } %>
+		<% }else{ %>
+			<button><a href="registration.html">Sign Up</a></button>
+			<button type="submit"><a href="login.html">Login</a></button>
+		<% } %>
+	</div>
+</div>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Category Page</title>
+</head>
+<body>
+	<%- include('../h&f/header.ejs')%>
+	<% for(let i=0;i<name.length;i++) {%>
+		<a href="test/product_id=<%= id[i]%>" class="product-subsection-a">
+			<section class="item-section">
+				<figure><img class="item-img" src='<%= image[i]%>' alt="item"></figure>
+				<div class="item-body">
+					<h3 class="item-name"><%= name[i]%></h3>
+					<div class="item-price"><%= price[i]%> HKD</div>
+				</div>
+			</section>
+		</a>
+	<% } %>
+	<a href="main.html">Return</a>
+	<%- include('../h&f/footer.ejs')%>
+
+</body>
+</html>

@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Detail —— <%= name%></title>
+	<title>Detail —— <%= name %></title>
 	<link rel="stylesheet" href="../css/product_style.css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 	<script src="../jquery-3.3.1.js"></script>
 	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>	
 </head>
 <body>
+	<%- include('../h&f/header.ejs')%>
 	<section class="product-box">
 		<h1 class="product-name"><%= name %></h1>
 		<p class="product-wording">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium delectus optio culpa alias, nobis ex voluptate commodi perspiciatis atque! Quae!</p>
@@ -22,7 +23,7 @@
 					</tr>
 					<tr>
 						<th>Category</th>
-						<td><?php echo $cresult; ?></td>
+						<td id="category"></td>
 					</tr>
 					<tr>
 						<th>Brand</th>
@@ -32,8 +33,13 @@
 			</table>
 		</div>
 		<div class="product-price"><%= price %> HKD</div>
-		<a href="" class="buy-btn">Buy here</a>
-		<a href="../add_cart/product_id=<%= id %>" class="cart-btn">Add to cart</a>
+		Add Item <input type="number" id="item_number" value="1">
+		<a class="buy-btn">Buy here</a>
+		<% if(login) {%>
+			<!-- <a href="../add_cart/product_id=<%= id %>" class="cart-btn">Add to cart</a> -->
+			<a class="cart-btn">Add to cart</a>
+		<% }else{%>
+			<% } %>
 		<div class="product-description">
 			<p class="product-description-p">
 				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis inventore, aperiam odit consequuntur? Fugit doloremque, officiis harum. Voluptatum officia, impedit aliquam mollitia iusto cupiditate! Voluptate sequi neque fugiat dolores tenetur!
@@ -67,8 +73,92 @@
 			</a>
 		</div>
 		<% } %>
+	</div>
+	<section class="product-comment">
+		<h3 class="comment-title">Leave a comment</h3>
+			<div class="comment-form-field">
+				<textarea name="comment" id="comment" placeholder=" Enter your comment..." cols="30" rows="10" class="comment-textbox"></textarea>
+				<button class="post-btn" type="submit" value="submit" form="comment_form" id="cmt-btn">
+					Post Comment
+				</button>
+			</div>
+		<div class="comment-section" id="cs">
+			<p class="commentsfont-size"><strong>Comments</strong></p>
+			<% if(comments.length != 0){%>			
+				<% for(let i=0;i<comments.length;i++){%>
+					<p><%= comments[i]%></p>
+				<% } %>
+			<% } %>
+		</div>
+	</section>
+		<%- include('../h&f/footer.ejs')%>
+
+		<script type="text/javascript">
+			window.addEventListener('load', function(){
+				var category = {1:'Latest product',2:'Mens Clothing',3:'Babies Clothing',4:'Cosmetic'}
+				var cat_td = document.getElementById('category')
+				cat_td.innerHTML = category[<%= category%>]
+				changeHref();
+				LoginPopUpBox();
+				AjaxComment();
+
+			})
 
 
+			var cart_btn = document.getElementsByClassName('cart-btn')[0];
+			var buy_btn = document.getElementsByClassName('buy-btn')[0];
 
+			cart_btn.addEventListener('click', function(){
+				var add_btn = document.getElementById('item_number');
+				var item_number = add_btn.value;
+				$.get("../add_cart/product_id=<%= id %>&num="+item_number)
+			}
+			)
+
+
+			function changeHref(){
+				var login = <%= login %>;
+				if(login == true){
+					document.querySelectorAll("a[href='user_home.html']")[0].href = '../user_home.html'
+					document.querySelectorAll("a[href='logout.html']")[0].href = '../logout.html'
+				}else{
+					document.querySelectorAll("a[href='login.html']")[0].href = '../login.html'
+				}
+			}
+
+			function LoginPopUpBox(){
+				var cart_btn = document.getElementsByClassName('cart-btn')[0];
+				var buy_btn = document.getElementsByClassName('buy-btn')[0];
+				if(<%= login %>){
+					cart_btn.addEventListener('click', function(){ alert('Item add to the cart') })
+					cart_btn.removeEventListener('click', function(){ alert('Item add to the cart') })
+					buy_btn.addEventListener('click', function(){ if(confirm('The payment have been proceed')){
+						(function(){
+							var add_btn = document.getElementById('item_number');
+							var item_number = add_btn.value;
+							$.get("../buy_product/product_id=<%= id %>&num="+item_number)
+			})()
+					}else{ alert('payment have cancelled') } })
+				}else{
+					buy_btn.removeAttribute('href');
+					buy_btn.addEventListener('click', function(){ alert('please login first') })
+					buy_btn.removeEventListener('click', function(){ alert('please login first') })
+				}
+			}
+
+			function AjaxComment(){
+				var btn = document.getElementById('cmt-btn');
+				var comment_section = document.getElementById('cs');
+				btn.addEventListener('click', function(){
+					var comment = document.getElementById('comment').value
+					var p = document.createElement('p');
+					var c = document.createTextNode(comment)
+					p.appendChild(c)
+					comment_section.appendChild(p);
+					$.get('../post_comment/product_id=<%= id %>&comment='+comment)
+				})
+			}
+		</script>
 </body>
 </html>
+

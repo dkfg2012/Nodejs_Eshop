@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Registration form</title>
+	<style type="text/css">
+		#code-box{
+			display: none;
+		}
+	</style>
+	<script src="../jquery-3.3.1.js"></script>
+</head>
+<body>
+	<form>
+		Username: <input id="username" type="text" maxlength="20">
+		<br>
+		Email address: <input id="email-address" type="text" maxlength="100">
+		<br>
+		Password: <input id="password" type="password" maxlength="10">
+		<br>
+		<input type="radio" id="Merchant" name="Merchant"> Open Merchant function
+		<input type="radio" name="Merchant"> Become a Customer Only
+		<br>
+		<button type="button" id="submit-btn" onclick="trigger()" >Submit</button>
+
+		<div id="code-box">
+			<p>Enter 6 digit code from your email</p>
+			<input type="number" min="100000" max="999999" id="code" onfocusout="sendCode()">
+			<a id="trigger" href=""><button type="button" id="codeSubmit">Submit</button></a>
+		</div>
+		</div>
+	</form>
+	<script type="text/javascript">
+		function trigger(){
+			var box = document.getElementById('code-box');
+			box.style.display = 'inline-block';
+			var email = document.getElementById('email-address').value
+			var username = document.getElementById('username').value
+			var password = document.getElementById('password').value
+			var merchant = document.getElementById('Merchant').checked
+			$.post("../reg_check", { email:email, username:username, password:password, merchant:merchant})
+		}
+		function sendCode(){
+			var code = document.getElementById('code').value
+			var trigger = document.getElementById('trigger')
+			// $.get('../sendCode='+code)
+			trigger.href = '../sendCode='+code
+		}
+
+
+	</script>
+</body>
+</html>

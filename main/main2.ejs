@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Document</title>
+	<title>Main page</title>
 	<link rel="stylesheet" href="/main/css/main_styles.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script src="jquery-3.3.1.js"></script>
@@ -12,22 +12,7 @@
 	<script src="/main/main.js"></script>
 </head>
 <body>
-	<div id="head-bar">
-		<span class="logo">
-			<img src="../mainPage_p/logo.svg" alt="logo">
-		</span>
-		<div class="search-bar">
-			<input type="text" placeholder="Search..">
-			<button type="submit">Submit</button>
-			<% if(login == true) {%>
-				<button type="submit"><a href="../login/logout.php">Logout</a></button>
-				<button><a href="user_home.html">User profile
-				</a></button>
-			<% }else{ %>
-				<button type="submit"><a href="login.html">Login</a></button>'
-			<% } %>
-		</div>
-	</div>
+	<%- include('../h&f/header.ejs')%>
 	<nav class="nav-bar">
 		<ul class="nav-topic-block">Search by brand
 			<li class="nav-block">Apple
@@ -83,47 +68,6 @@
 		</div>
 		<%}%>
 	</section>
-	<footer class="footer">
-		<nav>
-			<div class="footer-cell">
-				<h2 class="footer-cell-header">More Info</h2>
-				<ul>
-					<li class="footer-cell-li">About our company</li>
-					<li class="footer-cell-li">Career</li>
-					<li class="footer-cell-li">News</li>
-					<li class="footer-social-link footer-cell-li">
-						<a href="https://zh-hk.facebook.com/">
-							<i class="fa fa-facebook"></i>
-						</a>
-						<a href="https://twitter.com/?lang=zh-tw">
-							<i class="fa fa-twitter"></i>
-						</a>
-					</li>
-				</ul>
-			</div>
-			<div class="footer-cell">
-				<h2 class="footer-cell-header">Help</h2>
-				<ul>
-					<li class="footer-cell-li">Cargo problems</li>
-					<li class="footer-cell-li">Account problems</li>
-					<li class="footer-cell-li">Customer services</li>
-				</ul>
-			</div>
-			<div class="footer-cell-longer footer-cell">
-				<h2 class="footer-cell-header">Documentary</h2>
-				<div class="longer-cell">
-					<ul>
-						<li class="footer-cell-li longer-cell-li">Rule of buying stuff</li>
-						<li class="footer-cell-li longer-cell-li">Rule of using your account</li>
-						<li class="footer-cell-li longer-cell-li">Rule of scraping this web</li>
-					</ul>
-					<ul>
-						<li class="footer-cell-li longer-cell-li">HK law</li>
-						<li class="footer-cell-li longer-cell-li">Protect your rights</li>
-					</ul>
-				</div>
-			</div>
-		</nav>
-	</footer>
+	<%- include('../h&f/footer.ejs')%>
 </body>
 </html>

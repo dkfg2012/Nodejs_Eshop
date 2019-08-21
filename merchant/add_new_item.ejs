@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Add new item</title>
+</head>
+<body>
+	<form action="/add_item" method="post" enctype="multipart/form-data">
+		Product Name: <br>
+		<input type="text" name="name">
+		<br>
+		Price: <br>
+		<input type="number" name="price" value="0">
+		<br>		
+		Product description: <br>
+		<textarea name="product_des" cols="30" rows="10">Enter description of your product
+		</textarea>
+		<br>		
+		Storage: <br>
+		<input type="number" name="storage" value="0">
+		<br>
+		Image: <br>
+		<input type="file" name="filetoupload"><br>
+		<br>
+		<input type="radio" name="Category" value="1">Latest product
+		<input type="radio" name="Category" value="2">Mens Clothing
+		<input type="radio" name="Category" value="3">Babies Clothing
+		<input type="radio" name="Category" value="4">Cosmetic
+		<br>
+		<input type="submit" value="submit">
+	</form>
+</body>
+</html>

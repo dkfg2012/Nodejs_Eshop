@@ -4,41 +4,78 @@
  	<meta charset="UTF-8">
  	<title>Home</title>
  </head>
- <body>
- 	<% for(var i=0; i<name.length;i++) {%>
- 		 <section class="item-section">
- 		 	<figure><img class="item-img" src='<%= image[i]%>' alt="item"></figure>
- 		 	<div class="item-body">
-				<h3 class="item-name"><%=name[i]%></h3>
-				<div class="item-price"><%=price[i]%> HKD</div>
-			</div>
-		</section>
-	<% } %>
-	<br>
-	<button class="pay-btn">Payment</button>
- 	<br>
- 	<button class="clear-btn">Clear Cart</button>
- 	<br>
- 	<button class="drop-btn">Drop Cookie</button>
- 	<br>
- 	<a href="/main.php">Return</a>
- </body>
- <script src="../jquery-3.3.1.js"></script>
- <script>
- 	$(document).ready(function(){
- 			$('.pay-btn').click(function(){
- 				$.get("/user/payment");
- 			})
-			$('.clear-btn').click(function(){
-				clear = {'boolean':"1"};
-				$.get("../cart/cart_clear.php",clear );
-				alert("clear cart");
+ <% if(name == null){%>
+ 	<body>
+ 		<h1>Your cart is empty</h1>
+ 		<br>
+ 		<a href="main.html">Return</a>
+
+ 	</body>
+ 	<% }else{ %>
+ 	<body>
+	 	<% for(let i=0; i<name.length;i++) {%>
+	 		 <section class="item-section" order="<%= i %>">
+	 		 	<figure><img class="item-img" src='<%= image[i]%>' alt="item"></figure>
+	 		 	<div class="item-body">
+					<h3 class="item-name"><%=name[i]%></h3>
+					<div class="item-price"><%=price[i]%> HKD</div>
+				</div>
+				<button type="button" id="remove_btn<%= i %>" onclick="remove(<%= i %>)">Remove</button>
+			</section>
+		<% } %>
+		<br>
+		<button class="pay-btn">Payment</button>
+	 	<br>
+	 	<button class="clear-btn">Clear Cart</button>
+	 	<br>
+	 	<button class="drop-btn">Drop Cookie</button>
+	 	<br>
+	 	<a href="main.html">Return</a>
+	 <script src="../jquery-3.3.1.js"></script>
+	 <script>
+	 	$(document).ready(function(){
+	 			$('.pay-btn').click(function(){
+	 				if(confirm('Payment would be done if you clicked confirm')){
+	 					$.get("/user/payment");	
+	 					var section = document.getElementsByTagName('section');
+	 					for(let z = 0; z < section.length; z++){
+	 						section[z].style.display = 'none';
+	 					}
+	 					var body = document.getElementsByTagName('body')
+	 					var h1 = document.createElement('h1')
+	 					var text = document.createTextNode('Your cart is empty')
+	 					h1.appendChild(text);
+	 					body[0].appendChild(h1);
+
+	 				}else{
+	 					alert('Payment haven\'t proceed')
+	 				}
+
+	 			})
+				$('.clear-btn').click(function(){
+					if(confirm('all your item would lost if you clear the cart')){
+						$.get("clear_cart");
+						var section = document.getElementsByTagName('section')
+						for(let i=0;i<section.length;i++){
+							section[i].style.display = 'none'
+						}
+						alert("clear cart");
+					}
+				})
+				$('.drop-btn').click(function(){
+					clear = {'boolean':"2"};
+					$.get("../cart/cart_clear.php",clear );
+					alert("drop cookie");
+				})
 			})
-			$('.drop-btn').click(function(){
-				clear = {'boolean':"2"};
-				$.get("../cart/cart_clear.php",clear );
-				alert("drop cookie");
-			})
-		})
- </script>
+
+		 	function remove(order){
+		 		var btn_name = 'remove_btn'+order;
+		 		var btn = document.getElementById(btn_name);
+		 		btn.parentElement.style.display = 'none';
+		 		$.get('/remove_item='+order);
+		 	}
+	 </script>
+ 	</body>
+ 	<% } %>
  </html>
