@@ -4,9 +4,27 @@
 	<meta charset="UTF-8">
 	<title>Registration form</title>
 	<style type="text/css">
+		body{
+			position: relative;
+		}
 		#code-box{
 			display: none;
+			z-index: 9999;
+			width: 200px;
+			height: 200px;
+			left: 0px;
+			top: 0px;
+			position: absolute;
+			background: grey;
+
 		}
+		form{
+			display: inline-block;
+			position: relative;
+			z-index: 1;
+			width: 200px;
+			height: 200px;
+		};
 	</style>
 	<script src="../jquery-3.3.1.js"></script>
 </head>

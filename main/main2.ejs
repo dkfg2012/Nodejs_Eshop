@@ -1,4 +1,5 @@
 <%var session_title = {0:"Latest product", 4:"Mens Clothing", 8:"Babies Clothing", 12:"Cosmetic"}; %>
+<%var session_id = {0:1, 4:2, 8:3, 12:4}; %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -63,7 +64,7 @@
 						</section>
 					</a>
 					<% } %>
-				<span class="view-all"><a href="../product/categories.php?categories_name=<?php echo $session_title[$i] ?>">view all</a></span>
+				<span class="view-all"><a href="/category=<%=session_id[i]%>">view all</a></span>
 			</div>
 		</div>
 		<%}%>

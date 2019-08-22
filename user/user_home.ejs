@@ -13,6 +13,7 @@
  	</body>
  	<% }else{ %>
  	<body>
+
 	 	<% for(let i=0; i<name.length;i++) {%>
 	 		 <section class="item-section" order="<%= i %>">
 	 		 	<figure><img class="item-img" src='<%= image[i]%>' alt="item"></figure>
@@ -24,6 +25,9 @@
 			</section>
 		<% } %>
 		<br>
+ 		<button id="sorting_DSD">Most expensive</button>
+ 		<button id="sorting_ASD">Cheapest</button>
+		<br>
 		<button class="pay-btn">Payment</button>
 	 	<br>
 	 	<button class="clear-btn">Clear Cart</button>
@@ -34,6 +38,25 @@
 	 <script src="../jquery-3.3.1.js"></script>
 	 <script>
 	 	$(document).ready(function(){
+	 			$('#sorting_DSD').click(function(){
+	 				priceList = []
+	 				<%for(let i=0;i<price.length;i++){%>
+	 					priceList.push(<%=price[i]%>)
+	 				<%}%>
+	 				var newOr = sorting(priceList).DSD()
+	 				writeOrder(newOr)
+	 			})
+
+	 			$('#sorting_ASD').click(function(){
+	 				priceList = []
+	 				<%for(let i=0;i<price.length;i++){%>
+	 					priceList.push(<%=price[i]%>)
+	 				<%}%>
+	 				var newOr = sorting(priceList).ASD()
+	 				writeOrder(newOr)
+	 			})
+
+
 	 			$('.pay-btn').click(function(){
 	 				if(confirm('Payment would be done if you clicked confirm')){
 	 					$.get("/user/payment");	
@@ -69,12 +92,95 @@
 				})
 			})
 
+
 		 	function remove(order){
 		 		var btn_name = 'remove_btn'+order;
 		 		var btn = document.getElementById(btn_name);
 		 		btn.parentElement.style.display = 'none';
 		 		$.get('/remove_item='+order);
 		 	}
+
+		 	function sorting(price){
+		 		var orderObj = {};
+		 		var NewPriceList = price;
+		 		var NewOrder = []
+		 		NewPriceList.forEach(function(item, index){
+		 			orderObj[item] = index
+		 		})
+		 		// NewPriceList.sortDSD(function(num1, num2){
+		 		// 	return num1 - num2
+		 		// })
+
+		 		// NewPriceList.forEach(function(item, index){
+		 		// 	NewOrder.push(orderObj[item])
+
+		 		// })
+		 		// return NewOrder
+		 		return{
+		 			DSD: (function(){
+		 				NewPriceList.sort(function(num1, num2){	return num1 - num2 })
+		 				NewPriceList.forEach(function(item, index){ NewOrder.push(orderObj[item]) })
+		 				return NewOrder;
+		 			}),
+		 			ASD: (function(){
+		 				NewPriceList.sort(function(num1, num2){	return num2 - num1 })
+		 				NewPriceList.forEach(function(item, index){ NewOrder.push(orderObj[item]) })
+		 				return NewOrder;
+		 		})
+		 	}
+		 }
+
+		 	function writeOrder(OrderList){
+		 		var order = OrderList;
+		 		var name_list = [];
+		 		var image_list = [];
+		 		var price_list = [];
+		 		var length = "<%=name.length%>"
+		 		for(let i=0; i< length ;i++){
+		 			var section = document.getElementsByTagName('section')[0];
+		 			section.outerHTML = '';
+		 		}
+		 		<% for(let i=0; i< name.length; i++){%>
+		 				name_list.push("<%=name[i]%>")
+		 				image_list.push('<%=image[i]%>')
+		 				price_list.push("<%=price[i]%>")
+		 		<%}%>
+		 		order.forEach(function(item, index){
+		 			var section = document.createElement('section');
+		 			var figure = document.createElement('figure');
+		 			var img = document.createElement('img');
+		 			img.src =  image_list[item].replace('\f','\\f')
+		 			var l_div = document.createElement('div');
+		 			var h = document.createElement('h');
+		 			var s_div = document.createElement('div');
+		 			var btn = document.createElement('button')
+		 			var body = document.getElementsByTagName('body')[0]
+
+		 			var name = name_list[item]
+		 			var price = price_list[item]
+		 			var image_url = image_list[item].replace('\f','\\f')
+
+		 			var n = document.createTextNode(name)
+		 			h.appendChild(n)
+		 			var m = document.createTextNode(price)
+		 			s_div.appendChild(m)
+		 			l_div.appendChild(h)
+		 			l_div.appendChild(s_div)
+		 			figure.appendChild(img)
+		 			section.appendChild(figure)
+		 			section.appendChild(l_div)
+		 			var btn_t = document.createTextNode('Remove')
+		 			btn.appendChild(btn_t)
+		 			btn.setAttribute("id", 'remove_btn'+item);
+		 			btn.setAttribute("onclick", 'remove('+item+')');
+		 			btn.setAttribute("type", 'button');
+		 			section.appendChild(btn)
+		 			body.insertBefore(section, body.childNodes[0])
+		 		})
+
+
+		 	}
+
 	 </script>
  	</body>
  	<% } %>
