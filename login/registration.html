@@ -40,6 +40,7 @@
 		<input type="radio" name="Merchant"> Become a Customer Only
 		<br>
 		<button type="button" id="submit-btn" onclick="trigger()" >Submit</button>
+		<a href="/main.html"><button type="button">Return</button></a>
 
 		<div id="code-box">
 			<p>Enter 6 digit code from your email</p>
@@ -51,18 +52,33 @@
 	<script type="text/javascript">
 		function trigger(){
 			var box = document.getElementById('code-box');
-			box.style.display = 'inline-block';
 			var email = document.getElementById('email-address').value
 			var username = document.getElementById('username').value
 			var password = document.getElementById('password').value
 			var merchant = document.getElementById('Merchant').checked
-			$.post("../reg_check", { email:email, username:username, password:password, merchant:merchant})
+			if(validateEmail(email)){
+				// $.post("../reg_check", { email:email, username:username, password:password, merchant:merchant})
+				$.ajax({type: 'POST', url:"../reg_check", data: { email:email, username:username, password:password, merchant:merchant}}).done(function(data){
+					if (data == 1) {
+						alert('this username is already registered');
+					}else{
+						box.style.display = 'inline-block';
+					}
+				})
+			}else{
+				alert('Email is not a valid pattern');
+			}
 		}
 		function sendCode(){
 			var code = document.getElementById('code').value
 			var trigger = document.getElementById('trigger')
 			// $.get('../sendCode='+code)
 			trigger.href = '../sendCode='+code
+		}
+
+		function validateEmail(email) {
+			var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+			return re.test(String(email).toLowerCase());
 		}
 
 

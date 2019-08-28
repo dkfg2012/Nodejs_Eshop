@@ -7,6 +7,11 @@
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 	<script src="../jquery-3.3.1.js"></script>
 	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>	
+	<style>
+		.cursor{
+			cursor: pointer;
+		}
+	</style>
 </head>
 <body>
 	<%- include('../h&f/header.ejs')%>
@@ -14,7 +19,7 @@
 		<h1 class="product-name"><%= name %></h1>
 		<p class="product-wording">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium delectus optio culpa alias, nobis ex voluptate commodi perspiciatis atque! Quae!</p>
 		<div class="product-main-content">
-			<img class="product-img" src='../<%= image %>' alt="image1">
+			<img class="product-img" src='../<%= image %>' height="225" width="225" alt="image1">
 			<table class="product-detail">
 				<tbody>
 					<tr>
@@ -34,10 +39,10 @@
 		</div>
 		<div class="product-price"><%= price %> HKD</div>
 		Add Item <input type="number" id="item_number" value="1">
-		<a class="buy-btn">Buy here</a>
+		<a class="buy-btn cursor">Buy here</a>
 		<% if(login) {%>
 			<!-- <a href="../add_cart/product_id=<%= id %>" class="cart-btn">Add to cart</a> -->
-			<a class="cart-btn">Add to cart</a>
+			<a class="cart-btn cursor">Add to cart</a>
 		<% }else{%>
 			<% } %>
 		<div class="product-description">
@@ -45,12 +50,12 @@
 				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis inventore, aperiam odit consequuntur? Fugit doloremque, officiis harum. Voluptatum officia, impedit aliquam mollitia iusto cupiditate! Voluptate sequi neque fugiat dolores tenetur!
 			</p>
 		</div>
-		<div class="product-btn-container">
+<!-- 		<div class="product-btn-container">
 			<div class="left-btn">
 				<button class="bottom-btn">Like</button>
 				<button class="bottom-btn">Dislike</button>
 			</div>
-		</div>
+		</div> -->
 	</section>
 	<div class="prev-next-product">
 		<% if(id != 1) {%>
@@ -65,7 +70,7 @@
 		<div class="return">
 			<a href="../main.html" class="return-a">Return</a>
 		</div>
-		<% if(id < 34) {%>
+		<% if(id < max) {%>
 		<div class="next-product">
 			<a class="next-product-a" href="../test/product_id=<%= id+1 %>">
 				next
@@ -121,8 +126,12 @@
 				if(login == true){
 					document.querySelectorAll("a[href='user_home.html']")[0].href = '../user_home.html'
 					document.querySelectorAll("a[href='logout.html']")[0].href = '../logout.html'
+					try{
+						document.querySelectorAll("a[href='merchant_home.html']")[0].href = '../merchant_home.html'
+					}catch(err){  }
 				}else{
 					document.querySelectorAll("a[href='login.html']")[0].href = '../login.html'
+					document.querySelectorAll("a[href='registration.html']")[0].href = '../registration.html'
 				}
 			}
 
@@ -136,7 +145,14 @@
 						(function(){
 							var add_btn = document.getElementById('item_number');
 							var item_number = add_btn.value;
-							$.get("../buy_product/product_id=<%= id %>&num="+item_number)
+							// $.get("../buy_product/product_id=<%= id %>&num="+item_number)
+							$.ajax({url:"../buy_product/product_id=<%= id %>&num="+item_number}).done(function(data){
+								if(data == 1){
+									alert('You dont have enough money, the payment have been cancelled')
+								}else{
+									alert('The payment done')
+								}
+							})
 			})()
 					}else{ alert('payment have cancelled') } })
 				}else{

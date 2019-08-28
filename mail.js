@@ -1,12 +1,10 @@
-function Mailer(subjects, l, t, r, reciever){
+function Mailer(subjects, content, reciever){
 	const nodemailer = require('nodemailer');
 	this.subject = subjects;
-	this.l = l;
-	this.t = t;
-	this.r = r;
+	this.content = content;
 	this.reciever = reciever
 
-	const cont = "You have just bought " + parseInt(l) + " item, and the total price is "+ parseInt(t) +" HKD. Your account remain "+parseInt(r)+" HKD."
+	// const cont = "You have just bought " + parseInt(l) + " item, and the total price is "+ parseInt(t) +" HKD. Your account remain "+parseInt(r)+" HKD."
 
 	let transporter = nodemailer.createTransport({
 		host: 'smtp.mail.yahoo.com',
@@ -23,7 +21,7 @@ function Mailer(subjects, l, t, r, reciever){
 		to: reciever,
 		subject: subjects,
 		text: 'hello world',
-		html: cont
+		html: content
 	}
 
 	transporter.sendMail(mailOption, function(err, info){

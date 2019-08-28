@@ -32,8 +32,6 @@
 	 	<br>
 	 	<button class="clear-btn">Clear Cart</button>
 	 	<br>
-	 	<button class="drop-btn">Drop Cookie</button>
-	 	<br>
 	 	<a href="main.html">Return</a>
 	 <script src="../jquery-3.3.1.js"></script>
 	 <script>
@@ -57,24 +55,48 @@
 	 			})
 
 
+	 			// $('.pay-btn').click(function(){
+	 			// 	if(confirm('Payment would be done if you clicked confirm')){
+	 			// 		$.get("/user/payment");	
+	 			// 		var section = document.getElementsByTagName('section');
+	 			// 		for(let z = 0; z < section.length; z++){
+	 			// 			section[z].style.display = 'none';
+	 			// 		}
+	 			// 		var body = document.getElementsByTagName('body')
+	 			// 		var h1 = document.createElement('h1')
+	 			// 		var text = document.createTextNode('Your cart is empty')
+	 			// 		h1.appendChild(text);
+	 			// 		body[0].appendChild(h1);
+
+	 			// 	}else{
+	 			// 		alert('Payment haven\'t proceed')
+	 			// 	}
+
+	 			// })
+
 	 			$('.pay-btn').click(function(){
 	 				if(confirm('Payment would be done if you clicked confirm')){
-	 					$.get("/user/payment");	
-	 					var section = document.getElementsByTagName('section');
-	 					for(let z = 0; z < section.length; z++){
-	 						section[z].style.display = 'none';
-	 					}
-	 					var body = document.getElementsByTagName('body')
-	 					var h1 = document.createElement('h1')
-	 					var text = document.createTextNode('Your cart is empty')
-	 					h1.appendChild(text);
-	 					body[0].appendChild(h1);
-
+	 					$.ajax({url: '/user/payment'}).done(function (data) {
+	 				 		if(data == 1){
+	 				 			alert('You dont have enough money, the payment have been cancelled');
+	 				 		}else{
+		 						var section = document.getElementsByTagName('section');
+		 						for(let z = 0; z < section.length; z++){
+		 							section[z].style.display = 'none';
+		 				 		}
+		 							var body = document.getElementsByTagName('body')
+		 				 			var h1 = document.createElement('h1')
+		 				 			var text = document.createTextNode('Your cart is empty')
+		 							h1.appendChild(text);
+		 				 			body[0].appendChild(h1);
+	 				 		}
+	 					})
 	 				}else{
 	 					alert('Payment haven\'t proceed')
 	 				}
+	 			});
 
-	 			})
+
 				$('.clear-btn').click(function(){
 					if(confirm('all your item would lost if you clear the cart')){
 						$.get("clear_cart");

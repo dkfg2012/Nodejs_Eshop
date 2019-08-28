@@ -7,27 +7,28 @@
 <body>
 	<form action="/add_item" method="post" enctype="multipart/form-data">
 		Product Name: <br>
-		<input type="text" name="name">
+		<input type="text" name="name"  required>
 		<br>
 		Price: <br>
-		<input type="number" name="price" value="0">
+		<input type="number" name="price" value="0" required>
 		<br>		
 		Product description: <br>
-		<textarea name="product_des" cols="30" rows="10">Enter description of your product
+		<textarea name="product_des" cols="30" rows="10" required>Enter description of your product
 		</textarea>
 		<br>		
 		Storage: <br>
-		<input type="number" name="storage" value="0">
+		<input type="number" name="storage" value="0" required>
 		<br>
 		Image: <br>
-		<input type="file" name="filetoupload"><br>
+		<input type="file" name="filetoupload" required><br>
 		<br>
-		<input type="radio" name="Category" value="1">Latest product
-		<input type="radio" name="Category" value="2">Mens Clothing
-		<input type="radio" name="Category" value="3">Babies Clothing
-		<input type="radio" name="Category" value="4">Cosmetic
+		<input type="radio" name="Category" value="1" required>Latest product
+		<input type="radio" name="Category" value="2" required>Mens Clothing
+		<input type="radio" name="Category" value="3" required>Babies Clothing
+		<input type="radio" name="Category" value="4" required>Cosmetic
 		<br>
 		<input type="submit" value="submit">
 	</form>
+	<a href="../merchant_home.html">Return</a>
 </body>
 </html>

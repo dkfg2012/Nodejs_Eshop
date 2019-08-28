@@ -11,6 +11,7 @@ var formidable = require('formidable');
 var fs = require('fs');
 var url = require('url')
 
+
 //sql connection
 db.connect();
 //direct page
@@ -56,16 +57,18 @@ function callback(loopnum, err, data){
 		var image_list = data[2];
 		var id_list = data[3];
 		app.get('/main.html', function(req, res){
-			if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['login'] == true ){
-				login = true
-			}else{
-				login = false
-			}
-			if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['merchant'] == true ){
-				merchant = true
-			}else{
-				merchant = false
-			}
+			// if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['login'] == true ){
+			// 	login = true
+			// }else{
+			// 	login = false
+			// }
+			// if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['merchant'] == true ){
+			// 	merchant = true
+			// }else{
+			// 	merchant = false
+			// }
+			var login = CookieCheck(req)[0];
+			var merchant = CookieCheck(req)[1];
 			res.render(__dirname+ '\\main\\main2.ejs', 
 				{ name: name_list, price: price_list, image: image_list, 
 					id: id_list, login: login, merchant: merchant})})
@@ -88,25 +91,30 @@ app.get('/test/product_id=:id', function(req, res){
 				var id = results[0].product_id;
 				var category = results[0].product_category;
 				var comments = []
-				if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['login'] == true ){
-					login = true
-				}else{
-					login = false
-				}
+				// if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['login'] == true ){
+				// 	login = true
+				// }else{
+				// 	login = false
+				// }
+				var login = CookieCheck(req)[0];
 				db.query('SELECT comment_content FROM comments WHERE comment_post_id = '+req.params.id+" ; ", function(err, results){
 					try{
 						for(let i = 0; i<results.length;i++){
 							comments.push(results[i].comment_content)
 						}
 					}catch(err){}
-					res.render(__dirname+'/product/'+'product.ejs', { name: name, price: price, image: image, id: id , category:category, login: login, comments:comments});
+					db.query('SELECT MAX(product_id) FROM products', function(err, results){
+						var max = results[0]
+						var max = max[Object.keys(max)[0]]
+						res.render(__dirname+'/product/'+'product.ejs', { name: name, price: price, image: image, id: id , category:category, login: login, comments:comments, max:max});
+					})
 				})
 			}
 		})
 })
 
 app.get('/getCookie', function(req,res){
-	res.cookie('cookie',{'name': 'dkfg2012', "login":true, "cart":[10,20,30,6,21,24,12], 'merchant':1}, { maxAge: 60000 });
+	res.cookie('cookie',{'name': 'dkfg2012', "login":true, "cart":[10,20,30,6,21,24,12], 'merchant':1}, { maxAge: 600000 });
 	res.send('set cookie');
 })
 
@@ -145,46 +153,79 @@ app.get('/registration.html', function(req, res){
 
 
 app.post('/reg_check', urlencodedParser, function(req, res){
-	var code = (Math.random()*1000000).toPrecision(6)
-	var mailer = new sendMail('no reply email', code, 0, 10000, req.body.email)
+	var code = Math.floor((Math.random() *100000) + 100000)
+	var content = "Your passing code is "+ code +", enter the code shortly for the registration"
+	var mailer = new sendMail('no reply email', content, req.body.email)
 	var username = req.body.username
 	var password = req.body.password
 	var email = req.body.email
 	var merchant = req.body.merchant
-	console.log(code)
-	app.get('/sendCode=:code', function(req, res){
-		if(code== req.params.code){
-			var money = 10000
-			db.query('INSERT INTO users (user_name, user_password, user_email, user_money, Merchant) VALUES ( "'+username+'" , "'+password+'" , "'+email+'" , '+money+' , '+merchant+' ); ',
-				function(err,results){
-					res.redirect('/login.html')
+	db.query('SELECT * FROM users WHERE user_name = "'+ username+'" ; ', function(err, results){
+		if(results.length == 0){
+			res.send('2')
+			console.log(code)
+			app.get('/sendCode=:code', function(req, res){
+				if(code == req.params.code){
+					var money = 10000
+					db.query('INSERT INTO users (user_name, user_password, user_email, user_money, Merchant) VALUES ( "'+username+'" , "'+password+'" , "'+email+'" , '+money+' , '+merchant+' ); ',
+						function(err,results){
+							res.redirect('/login.html')
+						}
+					 )
+				}else{
+					res.send("<p>wrong passing code, please restart the registration</p><a href='/registration.html'>Return</a>")
 				}
-			 )
+			})
 		}else{
-			res.redirect('/registration.html')
+			res.send('1');
 		}
 	})
 })
 
 
-
-function LoginCheck(request, response, username, password){
-	db.query("SELECT user_name, user_password, merchant FROM users WHERE user_name = '"+username+"' ; ", function(err, results){
-		if (err) {console.log('err');}
-		else if(password == results[0].user_password){ 
-			response.cookie('cookie',{'name': username, "login":true, "cart":[], "merchant" : results[0].merchant}, { maxAge: 60000 });
-			response.redirect('/main.html');
-		 }
-	})
-
+//Function loginCheck
+function LoginCheck(req, res, username, password){
+		db.query("SELECT user_name, user_password, Merchant FROM users WHERE user_name = '"+username+"' ; ", function(err, results){
+			if (typeof results[0] == 'undefined'){ 
+				res.send('<h1>No such User</h1><a href="/login.html">Return</a>')
+				res.end();
+		}
+			else if(password == results[0].user_password){ 
+				var merchant = results[0].Merchant;
+				var merchant = parseInt(merchant.toString('hex'), 16)
+				res.cookie('cookie',{'name': username, "login":true, "cart":[], "merchant": merchant}, { maxAge: 600000 });
+				res.redirect('/main.html');
+		 	}
+		 	else{
+		 		res.send('<h1>Wrong Password</h1><a href="/login.html">Return</a>')
+		 		res.end();
+		 	}
+		})
 }
+
+//Function CookieCheck
+function CookieCheck(req){
+	if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['login'] == true ){
+		login = true
+	}else{
+		login = false
+	}
+	if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['merchant'] == true ){
+		merchant = true
+	}else{
+		merchant = false
+	}
+	return [login, merchant]
+}
+
+
 
 //login check
 app.post('/login_check', urlencodedParser, function(req, res){
 	if(req.body.pwd_repeat == req.body.password){
 		LoginCheck(req, res, req.body.username, req.body.password)
 	}else{
-		res.send('wrong repeated password');
+		res.send('<p>wrong repeated password</p><a href="/login.html">Return</a>');
 		res.end();
 	}
 }
@@ -199,7 +240,7 @@ app.get('/add_cart/product_id=:id&num=:num', function(req, res){
 	for(let i = 0; i<req.params.num; i++){
 		req.cookies.cookie['cart'].push(parseInt(req.params.id))
 	}
-	res.cookie('cookie',{'name': req.cookies.cookie['name'], "login":true, "cart":user_cart, 'merchant':req.cookies.cookie['merchant']}, { maxAge: 60000 });
+	res.cookie('cookie',{'name': req.cookies.cookie['name'], "login":true, "cart":user_cart, 'merchant':req.cookies.cookie['merchant']}, { maxAge: 600000 });
 	res.redirect('/test/product_id='+req.params.id);
 })
 
@@ -213,7 +254,7 @@ app.get('/clear_cart', function(req, res){
 	for(let i=0; i<length; i++){
 		user_cart.pop()
 	}
-	res.cookie('cookie',{'name': req.cookies.cookie['name'], "login":true, "cart":user_cart, 'merchant':req.cookies.cookie['merchant']}, { maxAge: 60000 });
+	res.cookie('cookie',{'name': req.cookies.cookie['name'], "login":true, "cart":user_cart, 'merchant':req.cookies.cookie['merchant']}, { maxAge: 600000 });
 	res.send(req.cookies);
 
 })
@@ -225,7 +266,7 @@ app.get('/remove_item=:order', function(req, res){
 	var index = req.params.order;
 	var user_cart = req.cookies.cookie['cart'];
 	user_cart.splice(index, 1);
-	res.cookie('cookie',{'name': req.cookies.cookie['name'], "login":true, "cart":user_cart, 'merchant':req.cookies.cookie['merchant']}, { maxAge: 60000 });
+	res.cookie('cookie',{'name': req.cookies.cookie['name'], "login":true, "cart":user_cart, 'merchant':req.cookies.cookie['merchant']}, { maxAge: 600000 });
 	res.send(req.cookies);
 
 })
@@ -237,11 +278,12 @@ app.get('/category=:id', function(req, res){
 	var price_list = [];
 	var image_list = [];
 	var id_list = [];
-	if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['login'] == true ){
-				login = true
-			}else{
-				login = false
-			}
+	// if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['login'] == true ){
+	// 			login = true
+	// 		}else{
+	// 			login = false
+	// 		}
+	var login = CookieCheck(req)[0];
 	db.query('SELECT * FROM products WHERE product_category = '+req.params.id+" ; ", function(err, results){
 		for(let i = 0; i<results.length; i++){
 			name_list.push(results[i].product_name)
@@ -265,29 +307,39 @@ app.get('/merchant_home.html', function(req, res){
 	var price_list = [];
 	var image_list = [];
 	var id_list = [];
-	if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['login'] == true ){
-				login = true
-			}else{
-				login = false
-			}
-	if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['merchant'] == true ){
+	// if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['login'] == true ){
+	// 			login = true
+	// 		}else{
+	// 			login = false
+	// 		}
+	var login = CookieCheck(req)[0];
+	var merchant = CookieCheck(req)[1];
+	if(merchant == true){
 		db.query("SELECT * FROM products WHERE merchant = '"+req.cookies.cookie['name']+"' ; ", function(err, results){
-			for(let i = 0; i<results.length; i++){
-				name_list.push(results[i].product_name)
-				price_list.push(results[i].product_price)
-				image_list.push(results[i].product_image_url)
-				id_list.push(results[i].product_id)
-				if(i == results.length-1){
-					res.render(__dirname+ '\\merchant\\user_home.ejs', 
+			if(results.length == 0){
+				res.render(__dirname+ '\\merchant\\user_home.ejs', 
 					{ name: name_list, price: price_list, image: image_list, 
 						id: id_list, login: login , merchant: req.cookies.cookie['merchant']})
-				}
-			}
+					}else{
+						for(let i = 0; i<results.length; i++){
+							name_list.push(results[i].product_name)
+							price_list.push(results[i].product_price)
+							image_list.push(results[i].product_image_url)
+							id_list.push(results[i].product_id)
+							if(i == results.length-1){
+								res.render(__dirname+ '\\merchant\\user_home.ejs', 
+								{ name: name_list, price: price_list, image: image_list, 
+									id: id_list, login: login , merchant: req.cookies.cookie['merchant']})
+							}
+						}
+					}
 		})	
 		}else{
 			res.redirect('/main.html')
 		}
-})
+	})
+// 	if(typeof(req.cookies.cookie) != 'undefined' && req.cookies.cookie['merchant'] == true ){
+// })
 
 
 
@@ -335,11 +387,16 @@ app.get('/buy_product/product_id=:id&num=:num', function(req, res){
 		var price = parseInt(results[0].product_price)*parseInt(req.params.num)
 		db.query("SELECT user_money, user_email FROM users WHERE user_name = '"+req.cookies.cookie['name']+"' ; ", function(err, results){
 						var money_left = parseFloat(results[0].user_money) - price;
-						var reciever = results[0].user_email;
-						db.query("UPDATE users SET user_money = "+money_left+" WHERE user_name = '"+req.cookies.cookie['name']+"' ; ", function(err, results){
-								var mailer = new sendMail('no reply email', req.params.num, price, money_left, reciever)
-								res.redirect('../test/product_id='+req.params.id);
-							})
+						if(money_left < 0){
+							res.send('1')
+						}else{
+							var reciever = results[0].user_email;
+							db.query("UPDATE users SET user_money = "+money_left+" WHERE user_name = '"+req.cookies.cookie['name']+"' ; ", function(err, results){
+									var content = "You have just bought " + req.params.num + " items, and the total price is "+ price +" HKD. Your account remain "+money_left+" HKD."
+									var mailer = new sendMail('no reply email', content, reciever)
+									res.redirect('../test/product_id='+req.params.id);
+								})
+						}
 					})
 	})
 })
@@ -347,9 +404,12 @@ app.get('/buy_product/product_id=:id&num=:num', function(req, res){
 
 
 
+
+
 //payment
 app.get('/user/payment', function(req, res){
 	var cart = req.cookies.cookie['cart'];
+	// var a = '['+cart+']'
 	var username = req.cookies.cookie['name']
 	var total_price = 0;
 	for(let i = 0; i<cart.length; i++){
@@ -358,15 +418,21 @@ app.get('/user/payment', function(req, res){
 			else{
 				total_price += parseFloat(results[0].product_price)
 				if(i == cart.length-1){
+					//INSERT INTO recieve_order (buyer_name, recieved_orders, merchant) VALUES ("dkfg2012", "[1,2,3]", "dkfg2012")
+					db.query("INSERT INTO recieve_order (buyer_name, recieved_orders, merchant) VALUES ('"+username+"' , '"+cart+"', 'dkfg2012');", function(err, results){
+						if(err){throw err}
+					})
 					db.query("SELECT user_money, user_email FROM users WHERE user_name = '"+username+"' ; ", function(err, results){
 						var money_left = parseFloat(results[0].user_money) - total_price;
 						var reciever = results[0].user_email;
 						if(money_left < 0){
-							'you dont have enough money'
+							res.send('1')
+							
 						}else{
 							db.query("UPDATE users SET user_money = "+money_left+" WHERE user_name = '"+username+"' ; ", function(err, results){
-								var mailer = new sendMail('no reply email', cart.length, total_price, money_left, reciever)
-								res.cookie('cookie',{'name': username, "login":true, "cart":[], 'merchant':req.cookies.cookie['merchant']}, { maxAge: 60000 });
+								var content = "You have just bought " + cart.length + " items, and the total price is "+ total_price +" HKD. Your account remain "+money_left+" HKD."
+								var mailer = new sendMail('no reply email', content, reciever)
+								res.cookie('cookie',{'name': username, "login":true, "cart":[], 'merchant':req.cookies.cookie['merchant']}, { maxAge: 600000 });
 								res.send(req.cookies);
 							})
 						}
@@ -384,8 +450,15 @@ app.get('/user/payment', function(req, res){
 
 //add_new_item
 app.get('/merchant_home/add_new_product', function(req, res){
-	res.render(__dirname+ '\\merchant\\add_new_item.ejs' )
+	if(CookieCheck(req)[0] == true && CookieCheck(req)[1] == true){
+		res.render(__dirname+ '\\merchant\\add_new_item.ejs' )
+	}else{
+		res.redirect('/main.html')
+	}
 })
+
+
+
 //?name=:name&price=:price&product_des=:product_des&storage=:storage
 app.post('/add_item', function(req, res){
 	var form = new formidable.IncomingForm();
@@ -409,6 +482,55 @@ app.post('/add_item', function(req, res){
     })
 })
 })
+
+
+app.get('/merchant_home/orders', function(req, res){
+	if(CookieCheck(req)[0] == true && CookieCheck(req)[1] == true){
+		var merchant = req.cookies.cookie['name'];
+		db.query("SELECT recieved_orders FROM recieve_order WHERE merchant = '"+merchant+"' ;", function(err, results){
+			if(results.length != 0){
+				var order = results[0].recieved_orders
+				var order = order.split(',')
+				for(let i = 0; i<order.length; i++){
+					console.log(order[i])
+				}
+			}else{
+				console.log('no order yet')
+			}
+		})
+	}
+})
+
+//edit product
+app.get('/merchant_home/edit_product_id=:id', function(req, res){
+	var id = req.params.id;
+	if(CookieCheck(req)[0] == true && CookieCheck(req)[1] == true){
+		res.render(__dirname+ '\\merchant\\edit_item.ejs' )
+		app.post('/edit_item', function(req, res){
+			var form = new formidable.IncomingForm();
+		    form.parse(req, function (err, fields, files){
+		    	var name = fields.name;
+		    	var price = fields.price;
+		    	var des = fields.product_des;
+		    	var storage = fields.storage;
+		    	var category = fields.Category
+		        db.query(" UPDATE products SET product_name = '"+name+"',\
+		         product_price = '"+price+"', \
+		         product_stocks = '"+storage+"', \
+		         product_slug = '"+name+"', \
+		         product_category = '"+category+"' WHERE product_id = "+ id +" ;",
+		        	function(err, results){
+		        		if(err) throw err;
+				        res.redirect('/merchant_home.html');
+		    })
+		})
+		})
+	}else{
+		res.redirect('/main.html')
+	}
+})
+
+
 
 
 

@@ -5,4 +5,5 @@ var connection = mysql.createConnection({
 	password : 'Fjst+197*',
 	database : 'eshop'
 });
+
 exports.connection = connection;

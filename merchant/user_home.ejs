@@ -7,14 +7,18 @@
 <body>
 	<!-- query sql that the item upload by this user, and then return all the item upload by this guy, the page layout would be same as normal user one, but can add an edit function, so before edit, a static page, edit to the add product page, with the value prefilled int o the form, no need for ajax-->
 	<%- include('../h&f/header.ejs')%>
+	<a href="/merchant_home/orders">check order</a>
+	<br>
 	<% for(let i=0; i<name.length;i++) {%>
 	 		 <section class="item-section">
 	 		 	<figure><img class="item-img" src='<%= image[i]%>' alt="item" order='<%= i %>'></figure>
 	 		 	<div class="item-body">
 					<h3 class="item-name"><%=name[i]%></h3>
 					<div class="item-price"><%=price[i]%> HKD</div>
+					<a href="/merchant_home/edit_product_id=<%= id[i] %>">edit</a>
 				</div>
 			</section>
+			<br>
 		<% } %>
 		<a href="/merchant_home/add_new_product">add items</a>
 		<a href="main.html">return</a>
