@@ -11,8 +11,8 @@ function Mailer(subjects, content, reciever){
 		port: 587,
 		secure: false,
 		auth:{
-			user: 'dkfg2012@yahoo.com.hk',
-			pass: 'public static void main(String args[])'
+			user: ,
+			pass: 
 		}
 	})
 
